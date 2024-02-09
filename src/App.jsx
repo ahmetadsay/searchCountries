@@ -1,12 +1,12 @@
 // App.jsx
-import { useState, useEffect } from 'react';
-import './App.css';
-import FilterInput from './components/FilterInput';
-import CountryList from './components/CountryList';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { useState, useEffect } from "react";
+import "./App.css";
+import FilterInput from "./components/FilterInput";
+import CountryList from "./components/CountryList";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: 'https://countries.trevorblades.com',
+  uri: "https://countries.trevorblades.com",
   cache: new InMemoryCache(),
 });
 
@@ -24,9 +24,9 @@ const LIST_COUNTRIES = gql`
 `;
 
 function App() {
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const [countries, setCountries] = useState([]);
-  const [selectedContinent, setSelectedContinent] = useState('');
+  const [selectedContinent, setSelectedContinent] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [continents, setContinents] = useState([]);
 
@@ -38,13 +38,15 @@ function App() {
           setCountries(data.countries);
           const defaultCountry = Math.min(9, data.countries.length - 1);
           setSelectedCountry(data.countries[defaultCountry]);
-          
+
           // Extract unique continents
-          const uniqueContinents = [...new Set(data.countries.map(country => country.continent.code))];
+          const uniqueContinents = [
+            ...new Set(data.countries.map((country) => country.continent.code)),
+          ];
           setContinents(uniqueContinents);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     }
 
@@ -56,14 +58,16 @@ function App() {
 
     // Apply filter based on input value
     if (filter) {
-      filteredCountries = filteredCountries.filter(country =>
+      filteredCountries = filteredCountries.filter((country) =>
         country.name.toLowerCase().includes(filter.toLowerCase())
       );
     }
 
     // Apply filter based on selected continent
     if (selectedContinent) {
-      filteredCountries = filteredCountries.filter(country => country.continent.code === selectedContinent);
+      filteredCountries = filteredCountries.filter(
+        (country) => country.continent.code === selectedContinent
+      );
     }
 
     setCountries(filteredCountries);
@@ -80,10 +84,16 @@ function App() {
   return (
     <div className="App">
       <FilterInput value={filter} onChange={handleFilterChange} />
-      <select value={selectedContinent} onChange={(e) => handleContinentSelect(e.target.value)}>
+      <select
+      className="dropdown"
+        value={selectedContinent}
+        onChange={(e) => handleContinentSelect(e.target.value)}
+      >
         <option value="">Select Continent</option>
-        {continents.map(continent => (
-          <option key={continent} value={continent}>{continent}</option>
+        {continents.map((continent) => (
+          <option key={continent} value={continent}>
+            {continent}
+          </option>
         ))}
       </select>
       <CountryList

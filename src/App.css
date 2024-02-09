@@ -1,5 +1,38 @@
-body {
-  background-color: #f1f1f1;
-  font-family: Arial, sans-serif;
-  color: #333;
+.App {
+  width: 80%;
+  height: 80%;
+  background-color: white;
+  border-radius: 10px; /* Adjust border radius as needed */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+
+.search {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transform: translate(20%, 25%);
+}
+
+.dropdown {
+  width: 30%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transform: translate(120%, 25%);
+}
+
+.country-table {
+    border-collapse: collapse; /* Merge borders between cells */
+  }
+  
+  .country-table td {
+    border: 1px solid black; /* Add borders to table cells */
+    padding: 8px; /* Add some padding for better readability */
+  }
+  

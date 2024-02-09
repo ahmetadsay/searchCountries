@@ -1,30 +1,38 @@
-// CountryList.jsx
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-const colors = ['red', 'green', 'blue', 'yellow', 'purple']; // predefined set of colors
+function CountryList({ countries }) {
+  const random18Countries = countries.slice(0, 18);
 
-function CountryList({ countries, selectedCountry, onCountryClick }) {
+  // Function to chunk the array into 3 columns
+  function chunkArray(arr, size) {
+    const chunkedArr = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunkedArr.push(arr.slice(i, i + size));
+    }
+    return chunkedArr;
+  }
+
+  const chunkedCountries = chunkArray(random18Countries, 3); // Chunk the array into 3 columns
+
   return (
-    <ul>
-      {countries.map((country, index) => (
-        <li
-          key={country.code}
-          onClick={() => onCountryClick(country)}
-          style={{
-            backgroundColor: country === selectedCountry ? colors[index % colors.length] : 'white',
-          }}
-        >
-          {country.name}
-        </li>
-      ))}
-    </ul>
+    <table className="country-table">
+      {" "}
+      {/* Add class for styling */}
+      <tbody>
+        {chunkedCountries.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            {row.map((country, colIndex) => (
+              <td key={colIndex}>{country.name}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
 CountryList.propTypes = {
   countries: PropTypes.array.isRequired,
-  selectedCountry: PropTypes.object,
-  onCountryClick: PropTypes.func.isRequired,
 };
 
 export default CountryList;
