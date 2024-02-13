@@ -1,4 +1,3 @@
-// App.jsx
 import { useState, useEffect } from "react";
 import "./App.css";
 import FilterInput from "./components/FilterInput";
@@ -26,9 +25,11 @@ const LIST_COUNTRIES = gql`
 function App() {
   const [filter, setFilter] = useState("");
   const [countries, setCountries] = useState([]);
-  const [selectedContinent, setSelectedContinent] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [continents, setContinents] = useState([]);
+  const [selectedContinent, setSelectedContinent] = useState("");
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [selectedColor, setSelectedColor] = useState(""); // Store the color of the selected item
 
   useEffect(() => {
     async function fetchData() {
@@ -36,8 +37,10 @@ function App() {
         const { data } = await client.query({ query: LIST_COUNTRIES });
         if (data && data.countries) {
           setCountries(data.countries);
-          const defaultCountry = Math.min(9, data.countries.length - 1);
-          setSelectedCountry(data.countries[defaultCountry]);
+          setFilteredCountries(data.countries); // Initialize filtered countries
+          const defaultCountryIndex = Math.min(9, data.countries.length - 1);
+          setSelectedCountry(data.countries[defaultCountryIndex]);
+          setSelectedColor(getRandomColor()); // Set initial color for selected item
 
           // Extract unique continents
           const uniqueContinents = [
@@ -70,8 +73,16 @@ function App() {
       );
     }
 
-    setCountries(filteredCountries);
+    setFilteredCountries(filteredCountries);
   }, [filter, selectedContinent, countries]);
+
+  useEffect(() => {
+    // Automatically select the 10th item, or the last one if the amount of items is smaller than 10
+    if (filteredCountries.length > 0) {
+      const index = Math.min(9, filteredCountries.length - 1);
+      setSelectedCountry(filteredCountries[index]);
+    }
+  }, [filteredCountries]);
 
   function handleFilterChange(value) {
     setFilter(value);
@@ -81,11 +92,21 @@ function App() {
     setSelectedContinent(continent);
   }
 
+  function handleCountrySelect(country) {
+    setSelectedCountry(country);
+    setSelectedColor(getRandomColor()); // Change color for the newly selected item
+  }
+
+  function getRandomColor() {
+    const colors = ["#FF5733", "#33FF57", "#5733FF", "#33B8FF", "#FF33E6"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
   return (
     <div className="App">
       <FilterInput value={filter} onChange={handleFilterChange} />
       <select
-      className="dropdown"
+        className="dropdown"
         value={selectedContinent}
         onChange={(e) => handleContinentSelect(e.target.value)}
       >
@@ -97,9 +118,10 @@ function App() {
         ))}
       </select>
       <CountryList
-        countries={countries}
+        countries={filteredCountries}
         selectedCountry={selectedCountry}
-        onCountryClick={setSelectedCountry}
+        onCountryClick={handleCountrySelect}
+        selectedColor={selectedColor}
       />
     </div>
   );

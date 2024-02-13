@@ -1,47 +1,60 @@
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-function shuffleArray(array) {
-  // Fisher-Yates shuffle algorithm
-  const shuffledArray = array.slice(); // Make a copy of the array to avoid mutating the original
-  for (let i = shuffledArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-  }
-  return shuffledArray;
-}
+function CountryList({
+  countries,
+  onCountryClick,
+  selectedCountry,
+  selectedColor,
+}) {
+  const [randomCountries, setRandomCountries] = useState([]);
 
-function CountryList({ countries, selectedCountry, onCountryClick }) {
-  // Shuffle the array of countries randomly
-  const shuffledCountries = shuffleArray(countries);
+  useEffect(() => {
+    const copiedCountries = [...countries];
+    const shuffledCountries = copiedCountries.sort(() => Math.random() - 0.5);
+    const random18Countries = shuffledCountries.slice(0, 18);
+    setRandomCountries(random18Countries);
+  }, [countries]);
 
-  // Get the first 18 countries after shuffling
-  const random18Countries = shuffledCountries.slice(0, 18);
+  const handleCountryClick = (country) => {
+    onCountryClick(country);
+  };
 
-  if (random18Countries.length < 18) {
-    return null; // or return a loading indicator
+  const getBackgroundColor = (country) => {
+    return selectedCountry && selectedCountry.code === country.code
+      ? selectedColor
+      : "transparent";
+  };
+
+  const renderCountryCell = (country) => (
+    <td
+      key={country.code}
+      onClick={() => handleCountryClick(country)}
+      style={{ backgroundColor: getBackgroundColor(country) }}
+    >
+      <img
+        src={`https://flagcdn.com/32x24/${country.code.toLowerCase()}.png`}
+        alt={country.name}
+      />
+      <div className="country-name">{country.name}</div>
+    </td>
+  );
+
+  const rows = [];
+  for (let i = 0; i < 6; i++) {
+    const cells = [];
+    for (let j = 0; j < 3; j++) {
+      const index = i * 3 + j;
+      const country = randomCountries[index];
+      if (!country) break;
+      cells.push(renderCountryCell(country));
+    }
+    rows.push(<tr key={i}>{cells}</tr>);
   }
 
   return (
-    <table>
-      <tbody>
-        {Array.from({ length: 6 }).map((_, rowIndex) => (
-          <tr key={rowIndex}>
-            {Array.from({ length: 3 }).map((_, colIndex) => {
-              const country = random18Countries[rowIndex * 3 + colIndex];
-              return (
-                <td key={colIndex} onClick={() => onCountryClick(country)}>
-                  <img
-                    src={`https://flagcdn.com/64x48/${country.code.toLowerCase()}.png`}
-                    alt={country.name}
-                  />
-
-                  {country.name}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
+    <table className="country-table">
+      <tbody>{rows}</tbody>
     </table>
   );
 }
@@ -49,6 +62,7 @@ function CountryList({ countries, selectedCountry, onCountryClick }) {
 CountryList.propTypes = {
   countries: PropTypes.array.isRequired,
   selectedCountry: PropTypes.object,
+  selectedColor: PropTypes.string,
   onCountryClick: PropTypes.func.isRequired,
 };
 

@@ -28,11 +28,32 @@
 }
 
 .country-table {
-    border-collapse: collapse; /* Merge borders between cells */
+    border-collapse: collapse;
+    margin-top: 20px; /* Add margin to the top */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.country-table td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    width: 10rem;
+ 
   }
   
   .country-table td {
-    border: 1px solid black; /* Add borders to table cells */
-    padding: 8px; /* Add some padding for better readability */
+    padding: 10px;
+    text-align: center; /* Center align the content */
+
+  }
+  
+  .country-table img {
+    margin-bottom: 5px; /* Add margin below the flag */
+  }
+  
+  .country-name {
+    margin-top: 5px; /* Add margin above the country name */
   }
   
